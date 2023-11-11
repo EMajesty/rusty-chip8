@@ -14,7 +14,7 @@ static FONT: [u8; 80] = [
     0xF0, 0x80, 0x80, 0x80, 0xF0, // C
     0xE0, 0x90, 0x90, 0x90, 0xE0, // D
     0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
-    0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+    0xF0, 0x80, 0xF0, 0x80, 0x80, // F
 ];
 
 fn main() {
@@ -32,43 +32,94 @@ fn main() {
         let opcode: u16 = memory[program_counter] << 8 | memory[program_counter + 1];
         program_counter += 2;
 
+        let x = opcode & 0x0F00 >> 2;
+        let y = opcode & 0x00F0 >> 1;
+        let kk = opcode & 0x00FF;
+
         // decode
         match opcode & 0xF000 {
             0x0 => match opcode {
                 0x00E0 => {
                     // CLS
-                },
+                }
                 0x00EE => {
                     // RET
                     // TODO: check popped value for None
                     program_counter = stack.pop().unwrap();
-                },
+                }
                 _ => println!("Unknown opcode {}", opcode),
             },
             0x1 => {
                 // JP addr
                 program_counter = opcode & 0x0FFF;
-            },
+            }
             0x2 => {
                 // CALL addr
                 stack.push(program_counter);
                 program_counter = opcode & 0x0FFF;
-            },
+            }
             0x3 => {
                 // SE Vx, byte
-                let x = opcode & 0x0F00 >> 2;
-                let kk = opcode & 0x00FF;
-
                 if v[x] == kk {
                     program_counter += 2;
                 }
-            },
+            }
             0x4 => {
                 // SNE Vx, byte
-                let x = opcode & 0x0F00 >> 2;
-                let kk = opcode & 0x00FF;
-
                 if v[x] != kk {
+                    program_counter += 2;
+                }
+            }
+            0x5 => {
+                // SE Vx, Vy
+                if v[x] == v[y] {
+                    program_counter += 2;
+                }
+            }
+            0x6 => {
+                // LD Vx, byte
+                v[x] = kk;
+            }
+            0x7 => {
+                // ADD Vx, byte
+                v[x] += kk;
+            }
+            0x8 => match opcode & 0x000F {
+                0x0000 => {
+                    // LD Vx, Vy
+                    v[x] = v[y];
+                }
+                0x0001 => {
+                    // OR
+                    v[x] = v[x] | v[y];
+                }
+                0x0002 => {
+                    // AND
+                    v[x] = v[x] & v[y];
+                }
+                0x0003 => {
+                    // XOR
+                    v[x] = v[x] ^ v[y];
+                }
+                0x0004 => {
+                    // ADD
+                }
+                0x0005 => {
+                    // SUB
+                }
+                0x0006 => {
+                    // SHR
+                }
+                0x0007 => {
+                    // SUBN
+                }
+                0x000E => {
+                    // SHL
+                }
+            },
+            0x9 => {
+                // SNE Vx, Vy
+                if v[x] != v[y] {
                     program_counter += 2;
                 }
             }
