@@ -40,143 +40,53 @@ fn main() {
         // decode
         match opcode & 0xF000 {
             0x0 => match opcode {
-                0x00E0 => {
-                    // CLS
-                },
-                0x00EE => {
-                    // RET
-                    // TODO: check popped value for None
-                    program_counter = stack.pop().unwrap();
-                },
+                0x00E0 => , // CLS
+                0x00EE => program_counter = stack.pop().unwrap(), // RET
                 _ => println!("Unknown opcode {}", opcode),
             },
-            0x1 => {
-                // JP addr
-                program_counter = nnn;
-            },
+            0x1 => program_counter = nnn, // JP addr
             0x2 => {
                 // CALL addr
                 stack.push(program_counter);
                 program_counter = nnn;
             },
-            0x3 => {
-                // SE Vx, byte
-                if v[x] == kk {
-                    program_counter += 2;
-                }
-            },
-            0x4 => {
-                // SNE Vx, byte
-                if v[x] != kk {
-                    program_counter += 2;
-                }
-            },
-            0x5 => {
-                // SE Vx, Vy
-                if v[x] == v[y] {
-                    program_counter += 2;
-                }
-            },
-            0x6 => {
-                // LD Vx, byte
-                v[x] = kk;
-            },
-            0x7 => {
-                // ADD Vx, byte
-                v[x] += kk;
-            },
+            0x3 => if v[x] == kk { program_counter += 2; }, // SE Vx, byte         
+            0x4 => if v[x] != kk { program_counter += 2; }, // SNE Vx, byte
+            0x5 => if v[x] == v[y] { program_counter += 2; }, // SE Vx, Vy       
+            0x6 => v[x] = kk, // LD Vx, byte
+            0x7 => v[x] += kk, // ADD Vx, byte
             0x8 => match opcode & 0x000F {
-                0x0000 => {
-                    // LD Vx, Vy
-                    v[x] = v[y];
-                },
-                0x0001 => {
-                    // OR
-                    v[x] = v[x] | v[y];
-                },
-                0x0002 => {
-                    // AND
-                    v[x] = v[x] & v[y];
-                },
-                0x0003 => {
-                    // XOR
-                    v[x] = v[x] ^ v[y];
-                },
-                0x0004 => {
-                    // ADD
-                },
-                0x0005 => {
-                    // SUB
-                },
-                0x0006 => {
-                    // SHR
-                },
-                0x0007 => {
-                    // SUBN
-                },
-                0x000E => {
-                    // SHL
-                },
+                0x0000 => v[x] = v[y], // LD Vx, Vy
+                0x0001 => v[x] = v[x] | v[y], // OR
+                0x0002 => v[x] = v[x] & v[y], // AND
+                0x0003 => v[x] = v[x] ^ v[y], // XOR
+                0x0004 => , // ADD
+                0x0005 => , // SUB
+                0x0006 => , // SHR
+                0x0007 => , // SUBN
+                0x000E => , // SHL
                 _ => println!("Unknown opcode {}", opcode),
             },
-            0x9 => {
-                // SNE Vx, Vy
-                if v[x] != v[y] {
-                    program_counter += 2;
-                }
-            },
-            0xA => {
-                // LD I, addr
-                index_register = nnn;
-            },
-            0xB => {
-                // JP V0, addr
-                program_counter = nnn + v[0];
-            },
-            0xC => {
-                // RND Vx, byte
-
-            },
-            0xD => {
-                // DRW Vx, Vy, nibble
-            },
+            0x9 => if v[x] != v[y] { program_counter += 2; }, // SNE Vx, Vy
+            0xA => index_register = nnn, // LD I, addr
+            0xB => program_counter = nnn + v[0], // JP V0, addr
+            0xC => , // RND Vx, byte
+            0xD => , // DRW Vx, Vy, nibble
             0xE => match opcode & 0xF0FF {
-                0xE09E => {
-                    // SKP Vx
-                },
-                0xE0A1 => {
-                    // SKNP Vx
-                },
+                0xE09E => , // SKP Vx
+                0xE0A1 => , // SKNP Vx
                 _ => println!("Unknown opcode {}", opcode),
             },
             0xF => match opcode & 0xF0FF {
-                0xF007 => {
-                    // LD Vx, DT
-                },
-                0xF00A => {
-                    // LC Vx, K
-                },
-                0xF015 => {
-                    // LD DT, Vx
-                },
-                0xF018 => {
-                    // LD ST, Vx
-                },
-                0xF01E => {
-                    // ADD I, Vx
-                },
-                0xF029 => {
-                    // LD F, Vx
-                },
-                0xF033 => {
-                    // LD B, Vx
-                },
-                0xF055 => {
-                    // LD [I], Vx
-                },
-                0xF065 => {
-                    // LD Vx, [I]
-                },
+                0xF007 => , // LD Vx, DT
+                0xF00A => , // LC Vx, K
+                0xF015 => , // LD DT, Vx
+                0xF018 => , // LD ST, Vx
+                0xF01E => , // ADD I, Vx
+                0xF029 => , // LD F, Vx
+                0xF033 => , // LD B, Vx
+                0xF055 => , // LD [I], Vx
+                0xF065 => , // LD Vx, [I]
                 _ => println!("Unknown opcode {}", opcode),
             },
             _ => println!("Unknown opcode {}", opcode),
